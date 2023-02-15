@@ -8,7 +8,7 @@
 	
 	Date:		2023-02-15
 
-	Description:	Class Grid_parameters (Beam preparings)
+	Description:	Class Beam
 
 	Comments:	!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -111,6 +111,21 @@ namespace create_vortex{
 				in[i] /= get_num_points();
 			return *this;
 		}
+		std::complex<double> phase_plate_1_point(size_t i, size_t j) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			double xj, yi, fi, real, imag, Re, Im;
+			xj = (j - get_N_x()/2.0 + 0.5) * get_dx();
+			yi = (i - get_N_x()/2.0 + 0.5) * get_dx();
+			fi = atan2(yi, xj);
+			real = E0.real();
+			imag = E0.imag();
+			Re = (real*cos(get_m()*fi) - imag*sin(get_m()*fi))
+						//* pow(sqrt(xj*xj + yi*yi)/beam.get_r0(), beam.get_m())
+						* exp(- (xj*xj + yi*yi) /2.0/get_r_x_0()/get_r_x_0());
+			Im = (imag*cos(get_m()*fi) + real*sin(get_m()*fi))
+						//* pow(sqrt(xj*xj + yi*yi)/beam.get_r0(), beam.get_m())
+						* exp(- (xj*xj + yi*yi) /2.0/get_r_x_0()/get_r_x_0());
+			return std::complex<double> (Re, Im);
+		}
 	public:
 		Beam (size_t N_x, double x_min, double x_max, size_t N_y, double y_min, double y_max, double l, unsigned char M, double r_x_0, double r_y_0, double phi_0 = 0.0):
 			Grid_parameters(N_x, x_min, x_max, N_y, y_min, y_max), Beam_parameters(l, M, r_x_0, r_y_0, phi_0) {}
@@ -143,13 +158,22 @@ namespace create_vortex{
 			}
 			return *this;
 		}
+		Beam& initial_picture(std::string file_name, double N_x, double N_y) {	//			WRITE!!!!!!
+			return *this;
+		}
 		Beam& step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish) {
 			double dz = get_z_diffraction() / static_cast<double>(num_of_calculating_steps_in_1_Z_diff);
 			for (double z_now = 0.0; z_now <= z_finish * get_z_diffraction(); z_now += dz)            // NUM OF Z_DIFFR (LENGH)
 				propagation_in_1_step(dz);
 			return *this;
 		}
-		Beam& phase_plate() { //				WRITE!!!!
+		Beam& phase_plate() { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			for (size_t i = 0; i < N; ++i) {												 // !!!!! put it in into the Grid_constructor
+				for (size_t j = 0; j < N; ++j)
+					in[i*N + j] = phase_plate(in[i*N + j], i, j);
+			}
 			return *this;
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!

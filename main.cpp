@@ -10,7 +10,7 @@ using namespace ofvp::create_vortex;
 	
 	Date:		2023-02-15
 
-	Description:	Class Grid_parameters (Beam preparings)
+	Description:	MAIN file
 
 	Comments:	!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -19,12 +19,13 @@ AVAILABLE FUNCTIONS:
 	- initial_gauss()											ON		2023-02-15
 	- initial_vortex()											ON		2023-02-15
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
-	- phase_plate()												OFF		2023-02-15
+	- phase_plate()												ON		2023-02-15
 	- print_amplitude(std::string str, int num)								ON		2023-02-15
 	- print_amplitude_center(double part_of_all_grid_in_1_D, std::string str, int num)			ON		2023-02-15
 	- print_phase(std::string str, int num)									ON		2023-02-15
 	- print_spectrum(std::string str, int num)								ON		2023-02-15
 	- print_spectrum_shifted()										OFF		2023-02-15
+	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
 
 CLOSE FUTURE PLANS:
 	- 2 or more peaks in one beam (2 or 3 mini-beams in one)
@@ -32,6 +33,7 @@ CLOSE FUTURE PLANS:
 	- interesting phase plates (2 singular points)
 FUTURE PLANS:
 	- elliptical beam (not just circular)
+	- create an option to digitize an image of an arbitrary beam
 
 
 
