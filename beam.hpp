@@ -6,7 +6,7 @@
 	
 	Author:		F. Soifer
 	
-	Date:		2023-02-15
+	Date:		2023-02-19
 
 	Description:	Class Beam
 
@@ -111,7 +111,7 @@ namespace create_vortex{
 				in[i] /= get_num_points();
 			return *this;
 		}
-		std::complex<double> phase_plate_1_point(size_t i, size_t j) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+		std::complex<double> phase_plate_1_point(std::complex<double> E0, size_t i, size_t j) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			double xj, yi, fi, real, imag, Re, Im;
 			xj = (j - get_N_x()/2.0 + 0.5) * get_dx();
 			yi = (i - get_N_x()/2.0 + 0.5) * get_dx();
@@ -158,6 +158,22 @@ namespace create_vortex{
 			}
 			return *this;
 		}
+		Beam& initial_2_max_points(double r_0_over_r_1 = 2.0) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			double x, y, phi;
+			double r_0 = get_r_x_0();
+			double r_1 = r_0 / r_0_over_r_1;
+			std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					x = coord_x(i);
+					y = coord_y(j);
+					phi = atan2(y, x) * (1.0 /*+ bp_.noise_amplitude()*sin(bp_.noise_theta()*hypot(x,y))*/);
+					in[i*N + j] = std::sqrt(x*x + y*y) / r_0 * (std::exp(-(x*x + (y-1)*(y-1))/2/r_1/r_1) + std::exp(-(x*x + (y+1)*(y+1))/2/r_1/r_1)) * exp(std::complex<double>(0, get_m()*phi));
+				}
+			}
+			return *this;
+		}
 		Beam& initial_picture(std::string file_name, double N_x, double N_y) {	//			WRITE!!!!!!
 			return *this;
 		}
@@ -172,7 +188,7 @@ namespace create_vortex{
 			size_t N = get_N_x();
 			for (size_t i = 0; i < N; ++i) {												 // !!!!! put it in into the Grid_constructor
 				for (size_t j = 0; j < N; ++j)
-					in[i*N + j] = phase_plate(in[i*N + j], i, j);
+					in[i*N + j] = phase_plate_1_point(in[i*N + j], i, j);
 			}
 			return *this;
 		}
@@ -191,7 +207,7 @@ namespace create_vortex{
 			for (size_t i = 0; i < N; ++i) {
 				for (size_t j = 0; j < N; ++j) {
 					res = sqrt(in[i*N + j].real()*in[i*N + j].real() + in[i*N + j].imag()*in[i*N + j].imag());
-					fout << res << '\t' << get_x_min() + i*get_dx() << '\t' << get_x_min() + j*get_dx() << std::endl;
+					fout << res << '\t' << coord_x(i) << '\t' << coord_y(j) << std::endl;
 				}
 			}
 			fout.close();
@@ -217,7 +233,7 @@ namespace create_vortex{
 			for (size_t i = floor(N/2) - N_close; i < floor(N/2) + N_close; ++i) {
 				for (size_t j = floor(N/2) - N_close; j < floor(N/2) + N_close; ++j) {
 					res = sqrt(in[i*N + j].real()*in[i*N + j].real() + in[i*N + j].imag()*in[i*N + j].imag());
-					fout << res << '\t' << get_x_min() + i*get_dx() << '\t' << get_x_min() + j*get_dx() << std::endl;
+					fout << res << '\t' << coord_x(i) << '\t' << coord_y(j) << std::endl;
 				}
 			}
 			fout.close();

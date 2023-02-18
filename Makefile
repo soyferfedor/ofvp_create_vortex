@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp -o program.e -lfftw3 -lm
+	g++ main.cpp -o program.exe -lfftw3 -lm

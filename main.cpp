@@ -1,5 +1,7 @@
 #include "beam.hpp"
-#include <memory>
+#include "excep.hpp"
+#include "log.hpp"
+#include "work_info.hpp"
 
 using namespace ofvp::create_vortex;
 
@@ -18,6 +20,8 @@ AVAILABLE FUNCTIONS:
 	FUNCTION												STATUS		UPD_DATE
 	- initial_gauss()											ON		2023-02-15
 	- initial_vortex()											ON		2023-02-15
+	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
+	- initial_2_max_points(double r_0_over_r_1 = 2.0)							ON		2023-02-19
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
 	- phase_plate()												ON		2023-02-15
 	- print_amplitude(std::string str, int num)								ON		2023-02-15
@@ -25,15 +29,15 @@ AVAILABLE FUNCTIONS:
 	- print_phase(std::string str, int num)									ON		2023-02-15
 	- print_spectrum(std::string str, int num)								ON		2023-02-15
 	- print_spectrum_shifted()										OFF		2023-02-15
-	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
 
 CLOSE FUTURE PLANS:
-	- 2 or more peaks in one beam (2 or 3 mini-beams in one)
-	- noise (phase and amplitude types)
 	- interesting phase plates (2 singular points)
+	- отраж от границ сетки (доработать)
+	- добавить в инициализ. ф-ии возможность выбирать тип (фаз или ампл) и параметры шума (реализ шум парам в отд классе)
 FUTURE PLANS:
 	- elliptical beam (not just circular)
 	- create an option to digitize an image of an arbitrary beam
+	- реализ работу всех ф-ий для произвольной прямоуг сетки
 
 
 
@@ -51,8 +55,9 @@ int main() {
 	size_t num_of_calculating_steps_in_1_Z_diff = 1000;								 // NUM OF STEPS IN Z_diff
 	double z_finish = 0.01;		
 
-	std::unique_ptr<Beam> b1 (new Beam(num_of_points_in_grid_in_1D, x_min, x_max,
+	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
-			    wavelength, topological_charge, initial_radius, initial_radius));
+			    wavelength, topological_charge, initial_radius, initial_radius);
+	b1.initial_gauss().phase_plate().print_phase();
 	return 0;
 }
