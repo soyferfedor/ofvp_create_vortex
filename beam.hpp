@@ -17,6 +17,7 @@
 
 #include "grid_param.hpp"
 #include "beam_param.hpp"
+#include "work_info.hpp"
 #include <fstream>
 
 namespace ofvp {
@@ -193,6 +194,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			str = "out/" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -201,6 +203,7 @@ namespace create_vortex{
 				std::cout << "Error in opening output file!";
 				exit(3);
 			}
+			print_in_work_info(str);
 			const std::complex<double>* in = set_ptr_in();
 			size_t N = get_N_x();
 			double res;
@@ -214,6 +217,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_amplitude_center(double part_of_all_grid_in_1_D = 0.125, std::string str = "output_ampl", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			str = "out/" + str;
 			if (part_of_all_grid_in_1_D > 1.0) { // rewrite as exception
 				std::cout << "Part can't be more than 1.0!";
 				exit(4);
@@ -226,6 +230,7 @@ namespace create_vortex{
 				std::cout << "Error in opening output file!";
 				exit(3);
 			}
+			print_in_work_info(str);
 			const std::complex<double>* in = set_ptr_in();
 			size_t N = get_N_x();
 			size_t N_close = floor(static_cast<double>(N) * static_cast<double>(part_of_all_grid_in_1_D) / 2.0);
@@ -240,6 +245,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_phase(std::string str = "output_phas", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			str = "out/" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -248,6 +254,7 @@ namespace create_vortex{
 				std::cout << "Error in opening output file!";
 				exit(3);
 			}
+			print_in_work_info(str);
 			const std::complex<double>* in = set_ptr_in();
 			size_t N = get_N_x();
 			double res;
@@ -260,6 +267,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_spectrum(std::string str = "output_spec", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			str = "out/" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -268,6 +276,7 @@ namespace create_vortex{
 				std::cout << "Error in opening output file!";
 				exit(3);
 			}
+			print_in_work_info(str);
 			fftw_execute_forward();
 			const std::complex<double>* out = set_ptr_out();
 			size_t N = get_N_x();
