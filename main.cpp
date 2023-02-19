@@ -38,6 +38,7 @@ FUTURE PLANS:
 	- create an option to digitize an image of an arbitrary beam
 	- реализ работу всех ф-ий для произвольной прямоуг сетки
 	- созд функцию print которая будет корректно выводить лог и мэйк-инфо, и генер исключ
+	- добавить генератор случайных флуктуаций с заданными парм (в т.ч. радиусом корреляции)
 
 
 
@@ -58,7 +59,6 @@ int main() {
 	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
 			    wavelength, topological_charge, initial_radius, initial_radius);
-	//b1.initial_gauss().phase_plate().print_phase();
-	b1.initial_2_max_points().print_amplitude_center();
+	b1.initial_2_max_points().print_amplitude_center(0.25);
 	return 0;
 }
