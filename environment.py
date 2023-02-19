@@ -30,7 +30,7 @@ while 1:
 		break
 
 
-work_info = open("work_info.txt", "r")
+work_info = open("out/work_info.txt", "r")
 lines_wi = work_info.readlines()
 for name in lines_wi:
 	name = name[:-1]
