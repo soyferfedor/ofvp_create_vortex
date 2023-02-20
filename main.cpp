@@ -26,13 +26,18 @@ AVAILABLE FUNCTIONS:
 	- print_amplitude(std::string str, int num)								ON		2023-02-15
 	- print_amplitude_center(double part_of_all_grid_in_1_D, std::string str, int num)			ON		2023-02-15
 	- print_phase(std::string str, int num)									ON		2023-02-15
+	- print_phase_center(double part_of_all_grid_in_1_D, std::string str, int num)				ON		2023-02-20
 	- print_spectrum(std::string str, int num)								ON		2023-02-15
+	- print_spectrum_center(double part_of_all_grid_in_1_D, std::string str, int num)			OFF		2023-02-20
 	- print_spectrum_shifted()										OFF		2023-02-15
 
 CLOSE FUTURE PLANS:
 	- interesting phase plates (2 singular points)
 	- отраж от границ сетки (доработать)
 	- добавить в инициализ. ф-ии возможность выбирать тип (фаз или ампл) и параметры шума (реализ шум парам в отд классе)
+	- реализовать print_spectrum_center()
+	- реализовать вывод 3д спектров
+	- реализовать вывод графиков в 2д
 FUTURE PLANS:
 	- elliptical beam (not just circular)
 	- create an option to digitize an image of an arbitrary beam
@@ -54,11 +59,12 @@ int main() {
 	double x_min = -8.0;                                  		                 // r/r_0
 	double x_max = 8.0;                                      		             // r/r_0
 	size_t num_of_calculating_steps_in_1_Z_diff = 10;								 // NUM OF STEPS IN Z_diff
-	double z_finish = 0.01;		
+	double z_finish = 1.0;		
 
 	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
 			    wavelength, topological_charge, initial_radius, initial_radius);
-	b1.initial_2_max_points().print_amplitude_center(0.25);
+	b1.initial_2_max_points().print_phase_center(0.25, "phase");
+	
 	return 0;
 }

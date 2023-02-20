@@ -266,6 +266,29 @@ namespace create_vortex{
 			}
 			return *this;
 		}
+		Beam& print_phase_center(double part_of_all_grid_in_1_D = 0.125, std::string str = "output_phas", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			str = "out/" + str;
+			if (num != -1)
+				str += to_string(num);
+			str += ".txt";
+			std::ofstream fout(str);  // f.write
+			if (!fout.is_open()) { // rewrite as exception
+				std::cout << "Error in opening output file!";
+				exit(3);
+			}
+			print_in_work_info(str);
+			const std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			size_t N_close = floor(static_cast<double>(N) * static_cast<double>(part_of_all_grid_in_1_D) / 2.0);
+			double res;
+			for (size_t i = floor(N/2) - N_close; i < floor(N/2) + N_close; ++i) {
+				for (size_t j = floor(N/2) - N_close; j < floor(N/2) + N_close; ++j) {
+					res = arg(in[i*N + j]);
+					fout << res << '\t' << coord_x(i) << '\t' << coord_y(j) << '\n';
+				}
+			}
+			return *this;
+		}
 		Beam& print_spectrum(std::string str = "output_spec", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			str = "out/" + str;
 			if (num != -1)
