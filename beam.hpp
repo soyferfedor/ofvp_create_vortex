@@ -289,7 +289,7 @@ namespace create_vortex{
 			}
 			return *this;
 		}
-		Beam& print_spectrum(std::string str = "output_spec", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+		Beam& print_spectrum_x(std::string str = "output_spec", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			str = "out/" + str;
 			if (num != -1)
 				str += to_string(num);
