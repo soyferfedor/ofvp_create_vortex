@@ -9,7 +9,7 @@ using namespace ofvp::create_vortex;
 	
 	Author:		F. Soifer
 	
-	Date:		2023-02-15
+	Date:		2023-02-27
 
 	Description:	MAIN file
 
@@ -27,11 +27,11 @@ AVAILABLE FUNCTIONS:
 	- print_amplitude_center(double part_of_all_grid_in_1_D, std::string str, int num)			ON		2023-02-15
 	- print_phase(std::string str, int num)									ON		2023-02-15
 	- print_phase_center(double part_of_all_grid_in_1_D, std::string str, int num)				ON		2023-02-20
-	- print_spectrum_x(std::string str, int num)								ON		2023-02-15
-	- print_spectrum_center_x(double part_of_all_grid_in_1_D, std::string str, int num)			OFF		2023-02-27
-	- print_spectrum(std::string str, int num)								OFF		2023-02-27
+	- print_spectrum_x(std::string str, int num)								ON		2023-02-15		do not use 2d graphs (in work)
+	- print_spectrum_center_x(double part_of_all_grid_in_1_D, std::string str, int num)			OFF		2023-02-27		do not use 2d graphs (in work)
+	- print_spectrum(std::string str, int num)								ON		2023-02-27
 	- print_spectrum_center(double part_of_all_grid_in_1_D, std::string str, int num)			OFF		2023-02-27
-	- print_spectrum_shifted()										OFF		2023-02-15
+	- print_spectrum_shifted()										OFF		2023-02-15		now it is in print_spectrum()
 
 CLOSE FUTURE PLANS:
 	- interesting phase plates (2 singular points)

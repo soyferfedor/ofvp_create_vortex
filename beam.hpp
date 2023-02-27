@@ -6,7 +6,7 @@
 	
 	Author:		F. Soifer
 	
-	Date:		2023-02-19
+	Date:		2023-02-27
 
 	Description:	Class Beam
 
@@ -289,7 +289,7 @@ namespace create_vortex{
 			}
 			return *this;
 		}
-		Beam& print_spectrum_x(std::string str = "output_spec", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+		Beam& print_spectrum_x(std::string str = "output_spec_x", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			str = "out/" + str;
 			if (num != -1)
 				str += to_string(num);
@@ -301,6 +301,7 @@ namespace create_vortex{
 			}
 			print_in_work_info(str);
 			fftw_execute_forward();
+			std::complex<double>* in = set_ptr_in();
 			const std::complex<double>* out = set_ptr_out();
 			size_t N = get_N_x();
 			double L = abs(get_x_max() - get_x_min());
@@ -312,9 +313,39 @@ namespace create_vortex{
 				fout << res << '\t' << k_x_min + i*dk_x << '\n';
 			}
 			fftw_execute_backward();
+			for (size_t i = 0; i < get_num_points(); ++i)
+				in[i] /= get_num_points();
 			fout.close();
 			return *this;
 		}
+		Beam& print_spectrum(std::string str = "output_spec", int num = -1) {  // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!	
+			str = "out/" + str;
+			if (num != -1)
+				str += to_string(num);
+			str += ".txt";
+			std::ofstream fout(str);  // f.write
+			if (!fout.is_open()) { // rewrite as exception
+				std::cout << "Error in opening output file!";
+				exit(3);
+			}
+			print_in_work_info(str);
+			fftw_execute_forward();
+			std::complex<double>* in = set_ptr_in();
+			const std::complex<double>* out = set_ptr_out();
+			size_t N = get_N_x();
+			double res;
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					res = abs(out[i*N + j]);
+					fout << res << '\t' << spectr_coord_shift_x(i) << '\t' << spectr_coord_shift_y(j) << '\n';
+				}
+			}
+			fftw_execute_backward();
+			for (size_t i = 0; i < get_num_points(); ++i)
+				in[i] /= get_num_points();
+			fout.close();
+			return *this;
+		}		
 		Beam& print_spectrum_shifted() { //				WRITE!!!!
 			return *this;
 		}

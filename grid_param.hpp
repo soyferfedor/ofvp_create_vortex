@@ -6,7 +6,7 @@
 	
 	Author:		F. Soifer
 	
-	Date:		2023-02-12
+	Date:		2023-02-27
 
 	Description:	Class Grid_parameters (Beam preparings)
 
@@ -117,6 +117,30 @@ namespace create_vortex{
 		}
 		double coord_y(size_t idx) const {
 			return y_min + dy * idx;
+		}
+		double spectr_coord_x(size_t idx) const {
+			double dk = 2.0 * M_PI / (get_x_max() - get_x_min());
+			double k_min = - dk * (get_N_x()/2 - 1);
+			return k_min + idx * dk;
+		}
+		double spectr_coord_shift_x(size_t idx) const {
+			double dk = 2.0 * M_PI / (get_x_max() - get_x_min());
+			if (idx < get_N_x()/2)
+				return idx * dk;
+			else
+				return - dk * (get_N_x() - idx);
+		}
+		double spectr_coord_y(size_t idx) const {
+			double dk = 2.0 * M_PI / (get_y_max() - get_y_min());
+			double k_min = - dk * (get_N_y()/2 - 1);
+			return k_min + idx * dk;
+		}
+		double spectr_coord_shift_y(size_t idx) const {
+			double dk = 2.0 * M_PI / (get_y_max() - get_y_min());
+			if (idx < get_N_y()/2)
+				return idx * dk;
+			else
+				return - dk * (get_N_y() - idx);
 		}
 		~Grid_arrays() {// dtor
 			delete[] in;
