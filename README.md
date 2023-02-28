@@ -7,10 +7,10 @@
 	1.5. matplotlib (for Python3, can be installed via pip3)
 
 
-2.1. To lanch the program (quickstqrt):
+2.1. To lanch the program (quickstart):
 
 	2.1.1. Edit "main.cpp" file to choose functions
-	2.1.2. Using command "bash launch.sh" in terminal to launch the program
+	2.1.2. Use command "bash launch.sh" in terminal to launch the program
 	2.1.3. Follow the instructions and notes in terminal
 	
 2.2. To lanch the program (old version):
