@@ -194,7 +194,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
-			str = "out/" + str;
+			str = "out/3D_" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -217,7 +217,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_amplitude_center(double part_of_all_grid_in_1_D = 0.125, std::string str = "output_ampl", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
-			str = "out/" + str;
+			str = "out/3D_" + str;
 			if (part_of_all_grid_in_1_D > 1.0) { // rewrite as exception
 				std::cout << "Part can't be more than 1.0!";
 				exit(4);
@@ -245,7 +245,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_phase(std::string str = "output_phas", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
-			str = "out/" + str;
+			str = "out/3D_" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -267,7 +267,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_phase_center(double part_of_all_grid_in_1_D = 0.125, std::string str = "output_phas", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
-			str = "out/" + str;
+			str = "out/3D_" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -290,7 +290,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_spectrum_x(std::string str = "output_spec_x", int num = -1) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
-			str = "out/" + str;
+			str = "out/2D_" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";
@@ -319,7 +319,7 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& print_spectrum(std::string str = "output_spec", int num = -1) {  // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!	
-			str = "out/" + str;
+			str = "out/3D_" + str;
 			if (num != -1)
 				str += to_string(num);
 			str += ".txt";

@@ -43,42 +43,48 @@ for name in lines_wi:
 	name = name[:-1]
 	print("Python: Now graph from file " + name + " is creating...")
 
-	plt.close('all')
-	fig = plt.figure()
-	# subplot
-	#ax = fig.gca(projection='3d') #old version
-	ax = fig.add_subplot(projection='3d')
-	X = []
-	Y = []
-	Z = []
+	if name[4] == '3':
+		plt.close('all')
+		fig = plt.figure()
+		# subplot
+		#ax = fig.gca(projection='3d') #old version
+		ax = fig.add_subplot(projection='3d')
+		X = []
+		Y = []
+		Z = []
 
-	try:  # numpy loadtxt
-		with open(name) as f:
-			for line in f:
-				z, x, y = map(float, line.split())
-				Z.append(z)
-				X.append(x)
-				Y.append(y)
-		# matplotlib contour contourf		
-		surf = ax.plot_trisurf(X, Y, Z, cmap=cm.coolwarm)
-		ax.view_init(40, 220)
-		
-		ax.zaxis.set_major_locator(LinearLocator(10))
-		ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-		 
-		fig.colorbar(surf, shrink=0.5, aspect=5)
-		
-	#	plt.show()
-		new_file_name = name[:-4] + '.png'
-		plt.savefig(fname=new_file_name)
-		print('Python: Everything is OK! Graph is ready here: ' + new_file_name)
-		if os.path.isfile(name):
-			os.remove(name)
-			print("Python: File " + name + " is deleted")
-		else:
-			print("Python: File " + name + " doesn't exists")
-	except FileNotFoundError:
-		print('Python: No such file named!', repr(name))
+		try:  # numpy loadtxt
+			with open(name) as f:
+				for line in f:
+					z, x, y = map(float, line.split())
+					Z.append(z)
+					X.append(x)
+					Y.append(y)
+			# matplotlib contour contourf		
+			surf = ax.plot_trisurf(X, Y, Z, cmap=cm.coolwarm)
+			ax.view_init(40, 220)
+			plt.xlabel("Axe X")
+			plt.ylabel("Axe Y")
+			ax.zaxis.set_major_locator(LinearLocator(10))
+			ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+			 
+			fig.colorbar(surf, shrink=0.5, aspect=5)
+			
+		#	plt.show()
+			new_file_name = name[:-4] + '.png'
+			plt.savefig(fname=new_file_name)
+			print('Python: Everything is OK! Graph is ready here: ' + new_file_name)
+			if os.path.isfile(name):
+				os.remove(name)
+				print("Python: File " + name + " is deleted")
+			else:
+				print("Python: File " + name + " doesn't exists")
+		except FileNotFoundError:
+			print('Python: No such file named!', repr(name))
+	elif name[4] == '2':
+		pass # 2d polts y(x) realize!!!
+	else:
+		print("Python: File " + name + " has an incorrect dimension type")
 work_info.close
 if os.path.isfile('out/work_info.txt'):
 	os.remove('out/work_info.txt')

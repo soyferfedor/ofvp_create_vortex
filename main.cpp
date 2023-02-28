@@ -38,7 +38,6 @@ CLOSE FUTURE PLANS:
 	- отраж от границ сетки (доработать)
 	- добавить в инициализ. ф-ии возможность выбирать тип (фаз или ампл) и параметры шума (реализ шум парам в отд классе)
 	- реализовать print_spectrum_center()
-	- реализовать вывод 3д спектров
 	- реализовать вывод графиков в 2д
 FUTURE PLANS:
 	- elliptical beam (not just circular)
@@ -57,7 +56,7 @@ int main() {
 	double initial_radius = 1.0;                                                 // r/r_0
 	double max_amplitude_of_initial_Hauss = 1.0;								 // I/I_0
 	unsigned char topological_charge = 1;
-	size_t num_of_points_in_grid_in_1D = 1024;										 // N; total points = N*N
+	size_t num_of_points_in_grid_in_1D = 128;										 // N; total points = N*N
 	double x_min = -8.0;                                  		                 // r/r_0
 	double x_max = 8.0;                                      		             // r/r_0
 	size_t num_of_calculating_steps_in_1_Z_diff = 10;								 // NUM OF STEPS IN Z_diff
@@ -66,7 +65,7 @@ int main() {
 	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
 			    wavelength, topological_charge, initial_radius, initial_radius);
-	b1.initial_2_max_points().print_phase_center(0.25, "phase");
+	b1.initial_2_max_points().print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,1_z_dif").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,2_z_dif");
 	
 	return 0;
 }
