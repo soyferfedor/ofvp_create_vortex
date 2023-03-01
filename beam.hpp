@@ -159,6 +159,23 @@ namespace create_vortex{
 			}
 			return *this;
 		}
+		Beam& initial_ellips(double b_over_a = 1.5) {  // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			std::complex<double>* in = this->set_ptr_in();
+			size_t N = get_N_x();
+			double min = get_x_min();
+			double dx = get_dx();
+			double x, y;
+			double a = 1.0;
+			double b = a * b_over_a;
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					x = min + i*dx;
+					y = min + j*dx;
+					in[i*N + j] = std::complex<double>(exp(-(x*x/a/a + y*y/b/b) / 2), 0.);
+				}
+			}
+			return *this;
+		}
 		Beam& initial_2_max_points(double r_0_over_r_1 = 2.0) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			double x, y, phi;
 			double r_0 = get_r_x_0();

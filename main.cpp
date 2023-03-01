@@ -19,6 +19,7 @@ AVAILABLE FUNCTIONS:
 	FUNCTION												STATUS		UPD_DATE
 	- initial_gauss()											ON		2023-02-15
 	- initial_vortex()											ON		2023-02-15
+	- initial_ellips(double b_over_a)									ON		2023-03-01
 	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
 	- initial_2_max_points(double r_0_over_r_1)								ON		2023-02-19
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
@@ -65,7 +66,7 @@ int main() {
 	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
 			    wavelength, topological_charge, initial_radius, initial_radius);
-	b1.initial_2_max_points().print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,1_z_dif").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,2_z_dif");
-	
+	//b1.initial_2_max_points().print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,1_z_dif").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,2_z_dif");
+	b1.initial_ellips(1.7).print_amplitude_center(0.6, "amplitude_init").step_diffraction(1, 2.0).print_amplitude_center(0.6, "amplitude_after_dif");
 	return 0;
 }
