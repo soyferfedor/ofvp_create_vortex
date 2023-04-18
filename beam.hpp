@@ -225,7 +225,7 @@ namespace create_vortex{
 					x = coord_x(i);
 					y = coord_y(j);
 					phi = atan2(y, x) * (1.0 /*+ bp_.noise_amplitude()*sin(bp_.noise_theta()*hypot(x,y))*/);
-					in[i*N + j] = std::pow(x*x + y*y, get_m()/2.0) * (std::exp(-(x*x + (y-6)*(y-6))/2/r_1/r_1) + std::exp(-(x*x + (y+1)*(y+1))/2/r_1/r_1)) * exp(std::complex<double>(0, get_m()*phi));
+					in[i*N + j] = std::pow(x*x + y*y, get_m()/2.0) * (std::exp(-(x*x + (y-1)*(y-1))/2/r_1/r_1) + std::exp(-(x*x + (y+1)*(y+1))/2/r_1/r_1)) * exp(std::complex<double>(0, get_m()*phi));
 				}
 			}
 			return *this;
