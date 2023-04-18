@@ -9,7 +9,7 @@ using namespace ofvp::create_vortex;
 	
 	Author:		F. Soifer
 	
-	Date:		2023-02-27
+	Date:		2023-03-02
 
 	Description:	MAIN file
 
@@ -18,12 +18,16 @@ using namespace ofvp::create_vortex;
 AVAILABLE FUNCTIONS:
 	FUNCTION												STATUS		UPD_DATE
 	- initial_gauss()											ON		2023-02-15
-	- initial_vortex()											ON		2023-02-15
+	- initial_vortex()											ON		2023-03-02
+	- initial_gaussvortex()											ON		2023-03-02
 	- initial_ellips(double b_over_a)									ON		2023-03-01
 	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
 	- initial_2_max_points(double r_0_over_r_1)								ON		2023-02-19
+	- initial_1_max_point(double fi, double r_0_over_r_1)							OFF		2023-03-14
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
 	- phase_plate()												ON		2023-02-15
+	- double_phase_plate(double num_r_new_center, char type_circle_1,
+					char type_circle_2, char cut_1, char cut_2)				ON		2023-04-17
 	- print_amplitude(std::string str, int num)								ON		2023-02-15
 	- print_amplitude_center(double part_of_all_grid_in_1_D, std::string str, int num)			ON		2023-02-15
 	- print_phase(std::string str, int num)									ON		2023-02-15
@@ -35,11 +39,11 @@ AVAILABLE FUNCTIONS:
 	- print_spectrum_shifted()										OFF		2023-02-15		now it is in print_spectrum()
 
 CLOSE FUTURE PLANS:
+	- вихрь с флуктуацией на кольце-максимуме
 	- interesting phase plates (2 singular points)
 	- отраж от границ сетки (доработать)
 	- добавить в инициализ. ф-ии возможность выбирать тип (фаз или ампл) и параметры шума (реализ шум парам в отд классе)
 	- реализовать print_spectrum_center()
-	- реализовать вывод графиков в 2д
 FUTURE PLANS:
 	- elliptical beam (not just circular)
 	- create an option to digitize an image of an arbitrary beam
@@ -57,16 +61,26 @@ int main() {
 	double initial_radius = 1.0;                                                 // r/r_0
 	double max_amplitude_of_initial_Hauss = 1.0;								 // I/I_0
 	unsigned char topological_charge = 1;
-	size_t num_of_points_in_grid_in_1D = 128;										 // N; total points = N*N
-	double x_min = -8.0;                                  		                 // r/r_0
-	double x_max = 8.0;                                      		             // r/r_0
+	size_t num_of_points_in_grid_in_1D = 256;										 // N; total points = N*N
+	double x_min = -16.0;                                  		                 // r/r_0
+	double x_max = 16.0;                                      		             // r/r_0
 	size_t num_of_calculating_steps_in_1_Z_diff = 10;								 // NUM OF STEPS IN Z_diff
-	double z_finish = 1.0;		
+	double z_finish = 1.0;
 
 	Beam b1 (num_of_points_in_grid_in_1D, x_min, x_max,
 			    num_of_points_in_grid_in_1D, x_min, x_max,
 			    wavelength, topological_charge, initial_radius, initial_radius);
-	//b1.initial_2_max_points().print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,1_z_dif").step_diffraction(1, 0.1).print_amplitude("amplitude_after_0,2_z_dif");
-	b1.initial_ellips(1.7).print_amplitude_center(0.6, "amplitude_init").step_diffraction(1, 2.0).print_amplitude_center(0.6, "amplitude_after_dif");
+	//b1.initial_gauss().print_amplitude_center(0.6, "amplitude_init").step_diffraction(1, 1.0).print_amplitude_center(0.6, "amplitude_after_dif");
+	b1.initial_ellips(2.5).print_spectrum("spectrum").print_amplitude_center(0.6, "amplitude_init").step_diffraction(1, 3.0).print_amplitude_center(0.6, "amplitude_after_dif");
+	//b1.initial_vortex().print_spectrum("spectrum").print_amplitude_center(0.8, "amplitude_init").step_diffraction(1, 1.0).print_amplitude_center(0.8, "amplitude_after_dif");
+	//b1.initial_ellips(2.0).print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 1.0);
+	//b1.initial_2_max_points().print_phase("phase_init").print_amplitude("amplitude_init").print_spectrum("spectrum").step_diffraction(1, 0.1).print_phase("phase_0,1zd").print_amplitude("amplitude_after_0,1_z_dif").step_diffraction(1, 0.1).print_phase("phase_0,2zd").print_amplitude("amplitude_after_0,2_z_dif");
+	
+	
+
+	//b1.initial_vortex().print_phase_center(0.6, "phase_ini");
+	
+	//b1.initial_gauss().phase_plate().print_phase_center(0.5);
+	//b1.initial_gauss().double_phase_plate(1.0, 0, 1).print_phase_center(0.2);
 	return 0;
 }

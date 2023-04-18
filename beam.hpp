@@ -75,17 +75,18 @@ namespace create_vortex{
 	class Beam: public Grid_parameters, Beam_parameters {
 		void multipl_by_exp(std::complex<double>& obj, double kx, double ky, double k, double dz, double lambda) {
 			double fi = (kx*kx + ky*ky) * dz / (2.0 * k);
-			double real = obj.real(), imag = obj.imag();
-			obj = std::complex<double> (real * cos(fi) - imag * sin(fi), real * sin(fi) + imag * cos(fi));
+			obj *= std::exp(std::complex<double>(0.0, fi));
+			//double real = obj.real(), imag = obj.imag();
+			//obj = std::complex<double> (real * cos(fi) - imag * sin(fi), real * sin(fi) + imag * cos(fi));
 		}
 		Beam& propagation_in_1_step(double dz) {			// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!! // rewrite more optimized
 			std::complex<double>* in = set_ptr_in();
 			std::complex<double>* out = set_ptr_out();
-			size_t N = get_N_x();
+			int N = static_cast<int>(get_N_x());
 			double dk = 2.0 * M_PI / (N * get_dx());
 			fftw_execute_forward();
-			for (size_t i = 0; i < N; ++i) {
-				for (size_t j = 0; j < N; ++j) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
 					if (i <= N/2-1) {
 						if (j <= N/2-1) 
 							multipl_by_exp(out[i*N + j],
@@ -112,11 +113,34 @@ namespace create_vortex{
 				in[i] /= get_num_points();
 			return *this;
 		}
-		std::complex<double> phase_plate_1_point(std::complex<double> E0, size_t i, size_t j) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+		std::complex<double> phase_plate_1_point(std::complex<double> E0, int i, int j) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			double xj, yi, fi, real, imag, Re, Im;
-			xj = (j - get_N_x()/2.0 + 0.5) * get_dx();
-			yi = (i - get_N_x()/2.0 + 0.5) * get_dx();
+			xj = (j - (int)get_N_x()/2.0 + 0.5) * get_dx();
+			yi = (i - (int)get_N_x()/2.0 + 0.5) * get_dx();
 			fi = atan2(yi, xj);
+			real = E0.real();
+			imag = E0.imag();
+			Re = (real*cos(get_m()*fi) - imag*sin(get_m()*fi))
+						//* pow(sqrt(xj*xj + yi*yi)/beam.get_r0(), beam.get_m())
+						* exp(- (xj*xj + yi*yi) /2.0/get_r_x_0()/get_r_x_0());
+			Im = (imag*cos(get_m()*fi) + real*sin(get_m()*fi))
+						//* pow(sqrt(xj*xj + yi*yi)/beam.get_r0(), beam.get_m())
+						* exp(- (xj*xj + yi*yi) /2.0/get_r_x_0()/get_r_x_0());
+			return std::complex<double> (Re, Im);
+		}
+		std::complex<double> double_phase_plate_1_point(std::complex<double> E0, int i, int j, double l, char type_circle_1, char type_circle_2) { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			double xj, yi, fi, real, imag, Re, Im;
+			int N_one_side = floor(double(get_N_x())*l/(get_x_max()-get_x_min())/2.0);
+			int N_half = floor(double(get_N_x())/2.0);
+			xj = (j - (int)get_N_x()/2.0 + 0.5) * get_dx();
+			if (i < N_half) {
+				yi = (i - N_half + 0.5 + N_one_side) * get_dx();
+				fi = pow(-1, type_circle_1) * atan2(yi, xj);
+			}
+			else {
+				yi = (i - N_half + 0.5 - N_one_side) * get_dx();
+				fi = pow(-1, type_circle_2) * atan2(yi, xj);
+			}
 			real = E0.real();
 			imag = E0.imag();
 			Re = (real*cos(get_m()*fi) - imag*sin(get_m()*fi))
@@ -146,6 +170,20 @@ namespace create_vortex{
 			return *this;
 		}
 		Beam& initial_vortex() { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			double x, y, phi;
+			std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					x = coord_x(i);
+					y = coord_y(j);
+					phi = atan2(y, x) * (1.0 /*+ bp_.noise_amplitude()*sin(bp_.noise_theta()*hypot(x,y))*/);
+					in[i*N + j] = std::pow(x*x + y*y, get_m()/2.0) * std::exp(-(x*x + y*y) / 2 / std::pow(get_r_x_0(), 2)) * exp(std::complex<double>(0, get_m()*phi));
+				}
+			}
+			return *this;
+		}
+		Beam& initial_gaussvortex() { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			double x, y, phi;
 			std::complex<double>* in = set_ptr_in();
 			size_t N = get_N_x();
@@ -187,9 +225,12 @@ namespace create_vortex{
 					x = coord_x(i);
 					y = coord_y(j);
 					phi = atan2(y, x) * (1.0 /*+ bp_.noise_amplitude()*sin(bp_.noise_theta()*hypot(x,y))*/);
-					in[i*N + j] = std::sqrt(x*x + y*y) / r_0 * (std::exp(-(x*x + (y-1)*(y-1))/2/r_1/r_1) + std::exp(-(x*x + (y+1)*(y+1))/2/r_1/r_1)) * exp(std::complex<double>(0, get_m()*phi));
+					in[i*N + j] = std::pow(x*x + y*y, get_m()/2.0) * (std::exp(-(x*x + (y-6)*(y-6))/2/r_1/r_1) + std::exp(-(x*x + (y+1)*(y+1))/2/r_1/r_1)) * exp(std::complex<double>(0, get_m()*phi));
 				}
 			}
+			return *this;
+		}
+		Beam& initial_1_max_point(double fi = 0.0, double r_0_over_r_1 = 0.01) {
 			return *this;
 		}
 		Beam& initial_picture(std::string file_name, double N_x, double N_y) {	//			WRITE!!!!!!
@@ -206,7 +247,22 @@ namespace create_vortex{
 			size_t N = get_N_x();
 			for (size_t i = 0; i < N; ++i) {												 // !!!!! put it in into the Grid_constructor
 				for (size_t j = 0; j < N; ++j)
-					in[i*N + j] = phase_plate_1_point(in[i*N + j], i, j);
+					in[i*N + j] = phase_plate_1_point(in[i*N + j], (int)i, (int)j);
+			}
+			return *this;
+		}
+		Beam& double_phase_plate(double num_r_new_center = 1.0, char type_circle_1 = 0, char type_circle_2 = 0, char cut_1 = 0, char cut_2 = 0) { // working just with N_x = N_y !!!!!!!!!! and 
+																				//cut_1 and cut_2 are not working
+			std::complex<double>* in = set_ptr_in();
+			int N = (int)get_N_x();
+			double r_0 = get_r_x_0();
+			double l = num_r_new_center * r_0;
+			int N_one_side = floor(double(N)*l/(get_x_max()-get_x_min())/2.0);
+			int N_half = floor(double(N)/2.0);
+			for (int i = N_half - 2*N_one_side; i < N_half + 2*N_one_side + 1; ++i) {						 // !!!!! put it in into the Grid_constructor
+				for (int j = N_half - 2*N_one_side; j < N_half + 2*N_one_side + 1; ++j) {
+					in[i*N + j] = double_phase_plate_1_point(in[i*N + j], i, j, l, type_circle_1, type_circle_2);
+				}
 			}
 			return *this;
 		}

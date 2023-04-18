@@ -21,7 +21,7 @@ while 1:
 		print ('Python: C++ worked good! C++ working time (in sec) was ' + str(waiting))
 		break
 	else:
-		print ('Python: C++ has a poblem! C++ returns exit code ' + str(notepad.poll()))
+		print ('Python: C++ has a problem! C++ returns exit code ' + str(notepad.poll()))
 		break
 	time.sleep(1)
 	waiting += 1
@@ -62,7 +62,8 @@ for name in lines_wi:
 					Y.append(y)
 			# matplotlib contour contourf		
 			surf = ax.plot_trisurf(X, Y, Z, cmap=cm.coolwarm)
-			ax.view_init(40, 220)
+			#ax.view_init(40, 220)
+			ax.view_init(90, 0)
 			plt.xlabel("Axe X")
 			plt.ylabel("Axe Y")
 			ax.zaxis.set_major_locator(LinearLocator(10))
@@ -78,16 +79,30 @@ for name in lines_wi:
 				os.remove(name)
 				print("Python: File " + name + " is deleted")
 			else:
-				print("Python: File " + name + " doesn't exists")
+				print("Python: File " + name + " doesn't exist")
 		except FileNotFoundError:
 			print('Python: No such file named!', repr(name))
 	elif name[4] == '2':
 		pass # 2d polts y(x) realize!!!
 	else:
 		print("Python: File " + name + " has an incorrect dimension type")
-work_info.close
+work_info.close()
 if os.path.isfile('out/work_info.txt'):
 	os.remove('out/work_info.txt')
 	print("Python: File out/work_info.txt is deleted")
 else:
 	print("Python: File out/work_info.txt doesn't exists")
+
+
+
+
+
+
+
+
+
+if False:
+	data = np.loadtxt(filename, usecols=(0,))
+	data = np.reshape(data, [int(np.sqrt(data.size)), int(np.sqrt(data.size))]) # N*N
+	#data = np.abs(data)**2
+	plt.imsave(pictname, data)
