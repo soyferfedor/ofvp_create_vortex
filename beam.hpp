@@ -151,6 +151,23 @@ namespace create_vortex{
 						* exp(- (xj*xj + yi*yi) /2.0/get_r_x_0()/get_r_x_0());
 			return std::complex<double> (Re, Im);
 		}
+		size_t find_max() const{						// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			const std::complex<double>* in = get_ptr_in();
+			size_t N = get_N_x();
+			double A_max = 0.0;
+			size_t n_max = 0;
+			double A_now;
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					A_now = sqrt(in[i*N + j].real()*in[i*N + j].real() + in[i*N + j].imag()*in[i*N + j].imag());
+					if (A_now > A_max) {
+						A_max = A_now;
+						n_max = i*N + j;
+					}
+				}
+			}
+			return n_max;
+		}
 	public:
 		Beam (size_t N_x, double x_min, double x_max, size_t N_y, double y_min, double y_max, double l, unsigned char M, double r_x_0, double r_y_0, double phi_0 = 0.0):
 			Grid_parameters(N_x, x_min, x_max, N_y, y_min, y_max), Beam_parameters(l, M, r_x_0, r_y_0, phi_0) {}
@@ -230,10 +247,63 @@ namespace create_vortex{
 			}
 			return *this;
 		}
-		Beam& initial_1_max_point(double fi = 0.0, double r_0_over_r_1 = 0.01) {
+		Beam& initial_1_max_point(double r_0_over_r_1 = 1.5, double ang_0 = 0.0, double part_ampl_0 = 0.3) {
+															// r_0_over_r_1 - how many times A_noise is more than A_0 
+															// ang_0 - angle between OX in positive direction
+															// part_ampl_0 - how many times A_noise is less than A_0
+			double x, y, phi, x_g, y_g;
+			double r_0 = get_r_x_0();
+			double r_g = r_0 / r_0_over_r_1;
+			std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					
+					x = coord_x(i);
+					y = coord_y(j);
+					x_g = x - r_0 * cos(ang_0);
+					y_g = y - r_0 * sin(ang_0);
+					phi = atan2(y, x) * (1.0 /*+ bp_.noise_amplitude()*sin(bp_.noise_theta()*hypot(x,y))*/);
+					in[i*N + j] = (std::pow(x*x + y*y, get_m()/2.0) * std::exp(-(x*x + y*y) / 2 / r_0 / r_0) +
+						       part_ampl_0 * std::exp(-(x_g*x_g + y_g*y_g) / 2 / r_g / r_g))
+						      * exp(std::complex<double>(0, get_m()*phi));
+				}
+			}
 			return *this;
 		}
 		Beam& initial_picture(std::string file_name, double N_x, double N_y) {	//			WRITE!!!!!!
+			return *this;
+		}
+		Beam& add_noise_phasescreen(std::string file_name) {
+			std::ifstream input(file_name);
+			if (!input.is_open()) {
+				std::cout << "Input file " << file_name << " with noise parameters can't be opened!" << std::endl;
+				exit(7); 
+			}
+			size_t N = get_N_x();
+			size_t grid_size = N*N*2;
+			double *noise_arr = new double(grid_size);
+			size_t counter = 0;
+			double input_val;
+			//while (getline(input, input_val) && counter < grid_size) {
+			//	noise_arr[counter] = input_val;
+			//	counter++;
+			//}
+			while (!input.eof() && counter < grid_size) {
+				input >> input_val;
+				counter++;
+			}
+			if (counter != grid_size) {
+				std::cout << "There are not so much values in " << file_name << "! Please, check the file!" << std::endl;
+				exit(8);
+			}
+			std::complex<double>* in = set_ptr_in();
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					in[i*N + j] = std::complex<double>(in[i*N + j].real() + noise_arr[(i*N + j) * 2], in[i*N + j].imag() + noise_arr[(i*N + j) * 2 + 1]);
+				}
+			}
+			input.close();
 			return *this;
 		}
 		Beam& step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish) {
@@ -265,6 +335,15 @@ namespace create_vortex{
 				}
 			}
 			return *this;
+		}
+		double compare_angles_between_maxs (double ang_before) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			size_t n_max =  find_max(); // write it in private
+			int j = (int)n_max % (int)get_N_x();
+			int i = (int)n_max / (int)get_N_x();
+			double x_new = coord_x(i);
+			double y_new = coord_y(j);
+			double ang_new = atan2(y_new, x_new) + M_PI;
+			return std::abs (ang_new - ang_before);
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			str = "out/3D_" + str;

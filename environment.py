@@ -76,7 +76,7 @@ for name in lines_wi:
 			plt.savefig(fname=new_file_name)
 			print('Python: Everything is OK! Graph is ready here: ' + new_file_name)
 			if os.path.isfile(name):
-				os.remove(name)
+				#os.remove(name)
 				print("Python: File " + name + " is deleted")
 			else:
 				print("Python: File " + name + " doesn't exist")
