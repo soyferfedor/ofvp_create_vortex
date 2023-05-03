@@ -25,6 +25,8 @@ AVAILABLE FUNCTIONS:
 	- initial_picture(std::string file_name, double N_x, double N_y)					OFF		2023-02-15
 	- initial_2_max_points(double r_0_over_r_1)								ON		2023-02-19
 	- initial_1_max_point(double r_0_over_r_1, double ang_0, double part_ampl_0)				ON		2023-04-24
+	- initial_zero()											ON		2023-05-03
+	- add_noise_phasescreen(std::string file_name, double sigma)						ON		2023-05-02
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
 	- phase_plate()												ON		2023-02-15
 	- double_phase_plate(double num_r_new_center, char type_circle_1,
@@ -63,7 +65,7 @@ int main() {
 	double initial_radius = 1.0;                                                 // r/r_0
 	double max_amplitude_of_initial_Hauss = 1.0;								 // I/I_0
 	unsigned char topological_charge = 1;
-	size_t num_of_points_in_grid_in_1D = 512;										 // N; total points = N*N
+	size_t num_of_points_in_grid_in_1D = 256;										 // N; total points = N*N
 	double x_min = -8.0;                                  		                 // r/r_0
 	double x_max = 8.0;                                      		             // r/r_0
 	size_t num_of_calculating_steps_in_1_Z_diff = 10;								 // NUM OF STEPS IN Z_diff
@@ -107,7 +109,11 @@ int main() {
 
 	//b1.initial_ellips(2.0).print_amplitude_center(0.7).phase_plate().step_diffraction(1, 0.5).print_amplitude_center(0.7, "amplitude_after_dif_0_5");
 
-	b1.initial_gauss().print_amplitude_center(0.6, "amplitude_init_gauss").double_phase_plate(1.0, 0, 1).print_phase_center(0.2).print_amplitude_center(0.6, "amplitude_after_phase_plate").step_diffraction(1, 0.05).print_amplitude_center(0.6, "amplitude_after_dif_0_05").print_phase_center(0.6);
+	//b1.initial_gauss().print_amplitude_center(0.6, "amplitude_init_gauss").double_phase_plate(1.0, 0, 1).print_phase_center(0.2).print_amplitude_center(0.6, "amplitude_after_phase_plate").step_diffraction(1, 0.05).print_amplitude_center(0.6, "amplitude_after_dif_0_05").print_phase_center(0.6);
+
+
+	//b1.initial_vortex().print_amplitude();
+	b1.initial_zero().add_noise_phasescreen("test/screen000.txt").print_amplitude();
 
 
 	return 0;

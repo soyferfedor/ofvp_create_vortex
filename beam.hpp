@@ -168,6 +168,10 @@ namespace create_vortex{
 			}
 			return n_max;
 		}
+		size_t find_min() const{
+			size_t N = get_N_x();
+			return N/2*N + N/2;
+		}
 	public:
 		Beam (size_t N_x, double x_min, double x_max, size_t N_y, double y_min, double y_max, double l, unsigned char M, double r_x_0, double r_y_0, double phi_0 = 0.0):
 			Grid_parameters(N_x, x_min, x_max, N_y, y_min, y_max), Beam_parameters(l, M, r_x_0, r_y_0, phi_0) {}
@@ -274,16 +278,26 @@ namespace create_vortex{
 		Beam& initial_picture(std::string file_name, double N_x, double N_y) {	//			WRITE!!!!!!
 			return *this;
 		}
-		Beam& add_noise_phasescreen(std::string file_name) {
+		Beam& initial_zero() { // working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			std::complex<double>* in = set_ptr_in();
+			size_t N = get_N_x();
+			for (size_t i = 0; i < N; ++i) {
+				for (size_t j = 0; j < N; ++j) {
+					in[i*N + j] = std::complex<double>(0.0,0.0);
+				}
+			}
+			return *this;
+		}
+		Beam& add_noise_phasescreen(std::string file_name, double sigma = 1.0) {
 			std::ifstream input(file_name);
 			if (!input.is_open()) {
 				std::cout << "Input file " << file_name << " with noise parameters can't be opened!" << std::endl;
 				exit(7); 
 			}
-			size_t N = get_N_x();
-			size_t grid_size = N*N*2;
+			int N = (int)get_N_x();
+			int grid_size = (int)N*N*2;
 			double *noise_arr = new double(grid_size);
-			size_t counter = 0;
+			int counter = 0;
 			double input_val;
 			//while (getline(input, input_val) && counter < grid_size) {
 			//	noise_arr[counter] = input_val;
@@ -291,6 +305,8 @@ namespace create_vortex{
 			//}
 			while (!input.eof() && counter < grid_size) {
 				input >> input_val;
+				noise_arr[counter] = input_val;
+//std::cout << counter << '\t' << input_val << '\n';
 				counter++;
 			}
 			if (counter != grid_size) {
@@ -298,9 +314,9 @@ namespace create_vortex{
 				exit(8);
 			}
 			std::complex<double>* in = set_ptr_in();
-			for (size_t i = 0; i < N; ++i) {
-				for (size_t j = 0; j < N; ++j) {
-					in[i*N + j] = std::complex<double>(in[i*N + j].real() + noise_arr[(i*N + j) * 2], in[i*N + j].imag() + noise_arr[(i*N + j) * 2 + 1]);
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					in[i*N + j] = std::complex<double>(in[i*N + j].real() + noise_arr[(i*N + j) * 2]*sigma, in[i*N + j].imag() + noise_arr[(i*N + j) * 2 + 1]*sigma);
 				}
 			}
 			input.close();
