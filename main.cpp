@@ -27,6 +27,7 @@ AVAILABLE FUNCTIONS:
 	- initial_1_max_point(double r_0_over_r_1, double ang_0, double part_ampl_0)				ON		2023-04-24
 	- initial_zero()											ON		2023-05-03
 	- add_noise_phasescreen(std::string file_name, double sigma)						ON		2023-05-02
+	- double find_r_beam()											ON		2023-05-03
 	- step_diffraction(size_t num_of_calculating_steps_in_1_Z_diff, double z_finish)			ON		2023-02-15
 	- phase_plate()												ON		2023-02-15
 	- double_phase_plate(double num_r_new_center, char type_circle_1,

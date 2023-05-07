@@ -168,9 +168,59 @@ namespace create_vortex{
 			}
 			return n_max;
 		}
-		size_t find_min() const{
+		size_t find_min() const{ // rewrite
 			size_t N = get_N_x();
 			return N/2*N + N/2;
+		}
+		double ampl_in_coord(double x, double y) const{						// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
+			const std::complex<double>* in = get_ptr_in();
+			double dx = get_dx();
+			size_t N = get_N_x();
+			double dist_now;
+			size_t i_close, j_close;
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					dist_now = sqrt((coord_x(i)-x)*(coord_x(i)-x) + ((coord_y(j)-y)*(coord_y(j)-y)));
+					if (dist_now < dx) {
+						i_close = i;
+						j_close = j;
+						goto ret_res;
+					}
+				}
+			}
+			exit(9); // if goto didn't work
+			ret_res:
+			return sqrt(in[i_close*N + j_close].real()*in[i_close*N + j_close].real() + in[i_close*N + j_close].imag()*in[i_close*N + j_close].imag());
+		}
+		double find_r_beam() const {
+			int N = (int)get_N_x();
+			int idx_min = (int)find_min();
+			int idx_max = (int)find_max();
+			double x_min = coord_x(idx_min);
+			double y_min = coord_y(idx_min);
+			double x_max = coord_x(idx_max);
+			double y_max = coord_y(idx_max);
+			return std::sqrt((x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min));
+		}
+		void receive_A_of_alpha(double *arr, size_t num_points = 360, double angle_beg = 0.0) {
+			size_t point_min = find_min();
+			int j_min = (int)point_min % (int)get_N_x();
+			int i_min = (int)point_min / (int)get_N_x();
+			double x_min = coord_x(i_min);
+			double y_min = coord_y(j_min);
+			double radius = find_r_beam();
+			double dalpha = 360.0 / num_points;
+			double x, y;
+			arr = new (std::nothrow) double[num_points];
+			if (!arr) {
+				std::cout << "Bad alloc memory in receive_A_of_alpha() function!";
+				exit(10);
+			}
+			for (int i = 0; i < (int)num_points; i++) {
+				x = x_min + radius * sin(angle_beg + i * dalpha);
+				y = y_min + radius * cos(angle_beg + i * dalpha);
+				arr[i] = ampl_in_coord(x, y);
+			}
 		}
 	public:
 		Beam (size_t N_x, double x_min, double x_max, size_t N_y, double y_min, double y_max, double l, unsigned char M, double r_x_0, double r_y_0, double phi_0 = 0.0):
@@ -360,6 +410,15 @@ namespace create_vortex{
 			double y_new = coord_y(j);
 			double ang_new = atan2(y_new, x_new) + M_PI;
 			return std::abs (ang_new - ang_before);
+		}
+		int find_num_of_max_on_circle() {
+			int num = 0;
+			double* A_of_alpha;
+			int points = 360;
+			double angle_beg = 0.0;
+			receive_A_of_alpha(A_of_alpha, (size_t)points, angle_beg);
+			// count num of maximums
+			return num;
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
 			str = "out/3D_" + str;
