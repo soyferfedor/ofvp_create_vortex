@@ -114,7 +114,8 @@ int main() {
 
 
 	//b1.initial_vortex().print_amplitude();
-	b1.initial_zero().add_noise_phasescreen("test/screen000.txt").print_amplitude();
+	//int a = b1.initial_zero().add_noise_phasescreen("test/screen000.txt").print_amplitude().find_num_of_max_on_circle();
+	int a = b1.initial_vortex().find_num_of_max_on_circle();
 
 
 	return 0;

@@ -178,9 +178,12 @@ namespace create_vortex{
 			size_t N = get_N_x();
 			double dist_now;
 			size_t i_close, j_close;
+//std::cout << x << ' ' << y << '\n';
 			for (int i = 0; i < N; ++i) {
 				for (int j = 0; j < N; ++j) {
-					dist_now = sqrt((coord_x(i)-x)*(coord_x(i)-x) + ((coord_y(j)-y)*(coord_y(j)-y)));
+					dist_now = std::sqrt((coord_x(i)-x)*(coord_x(i)-x) + ((coord_y(j)-y)*(coord_y(j)-y)));
+//if(dist_now < 0.06)
+//std::cout << dist_now << '\n';
 					if (dist_now < dx) {
 						i_close = i;
 						j_close = j;
@@ -188,7 +191,9 @@ namespace create_vortex{
 					}
 				}
 			}
+//std::cout << "hello!\n";
 			exit(9); // if goto didn't work
+//std::cout << "hello!\n";
 			ret_res:
 			return sqrt(in[i_close*N + j_close].real()*in[i_close*N + j_close].real() + in[i_close*N + j_close].imag()*in[i_close*N + j_close].imag());
 		}
@@ -200,6 +205,8 @@ namespace create_vortex{
 			double y_min = coord_y(idx_min);
 			double x_max = coord_x(idx_max);
 			double y_max = coord_y(idx_max);
+//std::cout << idx_min << ' ' << idx_max << '\n';
+std::cout << y_min << ' ' << y_max << ' ' << x_min << ' ' << x_max << '\n';
 			return std::sqrt((x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min));
 		}
 		void receive_A_of_alpha(double *arr, size_t num_points = 360, double angle_beg = 0.0) {
@@ -209,16 +216,13 @@ namespace create_vortex{
 			double x_min = coord_x(i_min);
 			double y_min = coord_y(j_min);
 			double radius = find_r_beam();
-			double dalpha = 360.0 / num_points;
+			double dalpha = 360.0 / num_points * M_PI/180;
 			double x, y;
-			arr = new (std::nothrow) double[num_points];
-			if (!arr) {
-				std::cout << "Bad alloc memory in receive_A_of_alpha() function!";
-				exit(10);
-			}
 			for (int i = 0; i < (int)num_points; i++) {
 				x = x_min + radius * sin(angle_beg + i * dalpha);
 				y = y_min + radius * cos(angle_beg + i * dalpha);
+//std::cout << y_min << ' ' << radius << ' ' << angle_beg << ' ' << dalpha << '\n';
+//std::cout << x << ' ' << y << '\n';
 				arr[i] = ampl_in_coord(x, y);
 			}
 		}
@@ -346,7 +350,11 @@ namespace create_vortex{
 			}
 			int N = (int)get_N_x();
 			int grid_size = (int)N*N*2;
-			double *noise_arr = new double(grid_size);
+			double *noise_arr = new (std::nothrow) double[grid_size];
+			if (!noise_arr) {
+				std::cout << "Bad alloc memory for noise_arr array!";
+				exit(12);
+			}
 			int counter = 0;
 			double input_val;
 			//while (getline(input, input_val) && counter < grid_size) {
@@ -356,7 +364,6 @@ namespace create_vortex{
 			while (!input.eof() && counter < grid_size) {
 				input >> input_val;
 				noise_arr[counter] = input_val;
-//std::cout << counter << '\t' << input_val << '\n';
 				counter++;
 			}
 			if (counter != grid_size) {
@@ -415,9 +422,83 @@ namespace create_vortex{
 			int num = 0;
 			double* A_of_alpha;
 			int points = 360;
+			A_of_alpha = new (std::nothrow) double[points];
+			if (!A_of_alpha) {
+				std::cout << "Bad alloc memory in receive_A_of_alpha() function!";
+				exit(10);
+			}
 			double angle_beg = 0.0;
+
 			receive_A_of_alpha(A_of_alpha, (size_t)points, angle_beg);
-			// count num of maximums
+		
+			
+			double A_medium, tmp = 0.0;
+			for (int i = 0; i < points; ++i)
+				tmp += A_of_alpha[i];
+			A_medium = tmp / points;
+			
+			
+			/*int *is_max = new (std::nothrow) int[points];
+			if (!is_max) {
+				std::cout << "Bad alloc memory for is_max array!";
+				exit(11);
+			}
+			if (A_of_alpha[points-1] <= A_of_alpha[0] && A_of_alpha[0] >= A_of_alpha[1])
+				is_max[0] = 1;
+			else
+				is_max[0] = 0;
+			for (int i = 1; i < points-1; ++i) {
+				if (A_of_alpha[i-1] <= A_of_alpha[i] && A_of_alpha[i] >= A_of_alpha[i+1])
+					is_max[i] = 1;
+				else
+					is_max[i] = 0;
+			}
+			if (A_of_alpha[points-2] <= A_of_alpha[points-1] && A_of_alpha[points-1] >= A_of_alpha[0])
+				is_max[points-1] = 1;
+			else
+				is_max[points-1] = 0;
+				
+			for (int i = 0; i < points; ++i)
+				if (A_of_alpha[i] < A_medium)
+					is_max[i] = 0;
+			*/
+						
+			
+			double A_red_line = A_medium;
+			int *is_big = new (std::nothrow) int[points];
+			if (!is_big) {
+				std::cout << "Bad alloc memory for is_max array!";
+				exit(11);
+			}
+			int ctr = 1;
+			
+			//if (A_of_alpha[points-1] > A_red_line)
+			//	is_big[points-1] = 1;
+			//else
+			//	is_big[points-1] = 0;
+			for (int i = 0; i < points; ++i) {
+				if (A_of_alpha[i] > A_red_line)
+					is_big[i] = ctr;
+				else {
+					is_big[i] = 0;
+					if (i != 0 && is_big[i-1] != 0)
+						ctr++;
+				}
+			}
+			if(A_of_alpha[0] != 0 && A_of_alpha[points-1] != 0)
+				for (int j = points-1; j >= 0; j--) {
+					if (A_of_alpha[j] != 0)
+						A_of_alpha[j] = 1;
+					else
+						goto count_num_points;
+				}
+
+			count_num_points:
+			for (int i = 0; i < points; ++i) {
+//std::cout << is_big[i] << '\n';
+				if (is_big[i] > num)
+					num = is_big[i];
+			}
 			return num;
 		}
 		Beam& print_amplitude(std::string str = "output_ampl", int num = -1) { 		// working just with N_x = N_y !!!!!!!!!!!!!!!!!!!!!!
