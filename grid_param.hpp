@@ -113,11 +113,13 @@ namespace create_vortex{
 			return dy;
 		}
 		double coord_x(size_t idx) const {
-			int idx_real = (int)idx / (int)get_N_x();
+//			int idx_real = (int)idx / (int)get_N_x();
+			int idx_real = (int)idx;
 			return x_min + dx * idx_real;
 		}
 		double coord_y(size_t idx) const {
-			int idx_real = (int)idx % (int)get_N_y();
+//			int idx_real = (int)idx % (int)get_N_y();
+			int idx_real = (int)idx;
 			return y_min + dy * idx_real;
 		}
 		double spectr_coord_x(size_t idx) const {

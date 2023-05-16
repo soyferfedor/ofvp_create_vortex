@@ -160,12 +160,15 @@ namespace create_vortex{
 			for (size_t i = 0; i < N; ++i) {
 				for (size_t j = 0; j < N; ++j) {
 					A_now = sqrt(in[i*N + j].real()*in[i*N + j].real() + in[i*N + j].imag()*in[i*N + j].imag());
+//if (i == N/2)
+//std::cout << A_now << '\n';
 					if (A_now > A_max) {
 						A_max = A_now;
 						n_max = i*N + j;
 					}
 				}
 			}
+//std::cout << n_max / N << '\n';
 			return n_max;
 		}
 		size_t find_min() const{ // rewrite
@@ -206,7 +209,8 @@ namespace create_vortex{
 			double x_max = coord_x(idx_max);
 			double y_max = coord_y(idx_max);
 //std::cout << idx_min << ' ' << idx_max << '\n';
-std::cout << y_min << ' ' << y_max << ' ' << x_min << ' ' << x_max << '\n';
+//std::cout << y_min << ' ' << y_max << ' ' << x_min << ' ' << x_max << '\n';
+//std::cout << std::sqrt((x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min)) << '\n';
 			return std::sqrt((x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min));
 		}
 		void receive_A_of_alpha(double *arr, size_t num_points = 360, double angle_beg = 0.0) {
