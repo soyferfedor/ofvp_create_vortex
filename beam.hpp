@@ -204,10 +204,10 @@ namespace create_vortex{
 			int N = (int)get_N_x();
 			int idx_min = (int)find_min();
 			int idx_max = (int)find_max();
-			double x_min = coord_x(idx_min);
-			double y_min = coord_y(idx_min);
-			double x_max = coord_x(idx_max);
-			double y_max = coord_y(idx_max);
+			double x_min = coord_x(idx_min / (int)get_N_x());
+			double y_min = coord_y(idx_min % (int)get_N_x());
+			double x_max = coord_x(idx_max / (int)get_N_x());
+			double y_max = coord_y(idx_max % (int)get_N_x());
 //std::cout << idx_min << ' ' << idx_max << '\n';
 //std::cout << y_min << ' ' << y_max << ' ' << x_min << ' ' << x_max << '\n';
 //std::cout << std::sqrt((x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min)) << '\n';
@@ -441,6 +441,8 @@ namespace create_vortex{
 				tmp += A_of_alpha[i];
 			A_medium = tmp / points;
 			
+			double koef_over_medium = 1.12;
+			A_medium *= koef_over_medium;
 			
 			/*int *is_max = new (std::nothrow) int[points];
 			if (!is_max) {
@@ -489,17 +491,17 @@ namespace create_vortex{
 						ctr++;
 				}
 			}
-			if(A_of_alpha[0] != 0 && A_of_alpha[points-1] != 0)
+			if(is_big[0] != 0 && is_big[points-1] != 0)
 				for (int j = points-1; j >= 0; j--) {
-					if (A_of_alpha[j] != 0)
-						A_of_alpha[j] = 1;
+					if (is_big[j] != 0)
+						is_big[j] = 1;
 					else
 						goto count_num_points;
 				}
 
 			count_num_points:
 			for (int i = 0; i < points; ++i) {
-//std::cout << is_big[i] << '\n';
+std::cout << is_big[i] << '\n';
 				if (is_big[i] > num)
 					num = is_big[i];
 			}

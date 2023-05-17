@@ -115,8 +115,8 @@ int main() {
 
 	//b1.initial_vortex().print_amplitude();
 	//int a = b1.initial_zero().add_noise_phasescreen("test/screen000.txt").print_amplitude().find_num_of_max_on_circle();
-	b1.initial_vortex().print_phase_center(0.6, "phase_ini");
-
-
+	//b1.initial_vortex().add_noise_phasescreen("test/screen000.txt", 0.0).print_amplitude_center(0.6, "phase_ini");
+	//b1.initial_vortex().add_noise_phasescreen("test/screen000.txt", 0.1).print_amplitude_center(0.6, "phase_ini");
+	int a = b1.initial_gauss().add_noise_phasescreen("test/screen000.txt", 0.15).phase_plate().print_amplitude_center(0.7, "gauss_initial").step_diffraction(1, 0.5).print_amplitude_center(0.7, "amplitude_after_dif_0,5_z_dif").find_num_of_max_on_circle();
 	return 0;
 }
